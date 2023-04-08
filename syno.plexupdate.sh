@@ -11,7 +11,7 @@
 # bash /volume1/homes/admin/scripts/bash/plex/syno.plexupdate/syno.plexupdate.sh
 
 # SCRIPT VERSION
-SPUScrpVer=3.0.2
+SPUScrpVer=3.0.3
 MinDSMVers=6.0
 # PRINT OUR GLORIOUS HEADER BECAUSE WE ARE FULL OF OURSELVES
 printf "\n"
@@ -47,6 +47,25 @@ fi
 if [ -f "$SPUSFolder/config.ini" ]; then
   . "$SPUSFolder/config.ini"
 fi
+
+# Allow an override of the timeout on the CLI
+while getopts ":a:" arg; do
+  case $arg in
+    a)
+      case $OPTARG in
+        '' | *[!0-9]*)
+          echo "The value for -a must be a number" >&2
+          ;;
+        *) MinimumAge="$OPTARG" ;;
+      esac
+      ;;
+    *)
+      echo "Missing a required argument for -${OPTARG}" >&2
+      exit 1
+      ;;
+  esac
+done
+shift $(expr $OPTIND - 1)
 
 #CHECK IF SCRIPT IS ARCHIVED
 if [ ! -d "$SPUSFolder/Archive/Scripts" ]; then
